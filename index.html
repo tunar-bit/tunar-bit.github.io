@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mars Waste Processing Device - Animation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
+            color: #fff;
+            overflow-x: hidden;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            animation: fadeIn 1s ease-in;
+        }
+        
+        h1 {
+            font-size: 2.5em;
+            color: #4ecca3;
+            text-shadow: 0 0 20px rgba(78, 204, 163, 0.5);
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: #90caf9;
+            font-size: 1.1em;
+        }
+        
+        .machine-container {
+            display: flex;
+            gap: 40px;
+            margin-top: 40px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .module {
+            background: rgba(44, 62, 80, 0.6);
+            border-radius: 20px;
+            padding: 30px;
+            flex: 1;
+            min-width: 450px;
+            max-width: 700px;
+            border: 3px solid;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+        
+        .module::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+        
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .extrusion {
+            border-color: #27ae60;
+        }
+        
+        .pyrolysis {
+            border-color: #e74c3c;
+        }
+        
+        .module-title {
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .extrusion .module-title {
+            color: #27ae60;
+        }
+        
+        .pyrolysis .module-title {
+            color: #e74c3c;
+        }
+        
+        .machine-visual {
+            position: relative;
+            height: 400px;
+            margin: 20px 0;
+            z-index: 1;
+        }
+        
+        /* Extrusion components */
+        .hopper {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 60px;
+            background: linear-gradient(to bottom, #5a6d7e, #34495e);
+            clip-path: polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%);
+            border: 2px solid #2c3e50;
+        }
+        
+        .material-input {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: #27ae60;
+            border-radius: 50%;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: fallInput 2s ease-in infinite;
+            box-shadow: 0 0 10px #27ae60;
+        }
+        
+        @keyframes fallInput {
+            0% { top: -10px; opacity: 1; }
+            100% { top: 70px; opacity: 0; }
+        }
+        
+        .barrel {
+            position: absolute;
+            top: 100px;
+            left: 50px;
+            width: 350px;
+            height: 80px;
+            background: linear-gradient(90deg, #4a5568, #718096, #4a5568);
+            border-radius: 10px;
+            border: 3px solid #2c3e50;
+        }
+        
+        .heating-zone {
+            position: absolute;
+            height: 60px;
+            top: 0px; /* Eskiden 10px idi, yukarı aldık */
+            border-radius: 5px;
+            display: flex;
+            align-items: flex-end; /* Yazıyı kutunun altına yaklaştırmak için */
+            justify-content: center;
+            font-size: 0.9em;
+            font-weight: bold;
+            animation: pulse 2s ease-in-out infinite;
+            padding-bottom: 18px; /* Yazıyı yukarı almak için eklendi */
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+        }
+        
+        .zone1 {
+            left: 10px;
+            width: 100px;
+            /* More whitish for 180°C */
+            background: linear-gradient(135deg, #ff5252, #ff8861);
+        }
+        
+        .zone2 {
+            left: 120px;
+            width: 100px;
+            /* More red-orange for 200°C */
+            background: linear-gradient(135deg, #ff6b35, #e63946);
+            animation-delay: 0.3s;
+        }
+        
+        .zone3 {
+            left: 230px;
+            width: 100px;
+            /* More reddish for 220°C */
+            background: linear-gradient(135deg, #e63946, #d62828);
+            animation-delay: 0.6s;
+        }
+        
+        .screw-animation {
+            position: absolute;
+            width: 280px;
+            height: 8px;
+            top: 46px; /* Eskiden 54px idi, biraz yukarı alındı */
+            left: 35px;
+            background: repeating-linear-gradient(
+                90deg,
+                #d35400,
+                #d35400 15px,
+                transparent 15px,
+                transparent 30px
+            );
+            animation: scrollScrew 2s linear infinite;
+        }
+        
+        @keyframes scrollScrew {
+            from { background-position: 0 0; }
+            to { background-position: 30px 0; }
+        }
+        
+        .die-head {
+            position: absolute;
+            top: 110px;
+            left: 400px;
+            width: 50px;
+            height: 60px;
+            background: #8b4513;
+            clip-path: polygon(0 20%, 100% 30%, 100% 70%, 0 80%);
+            border: 2px solid #5a2d0c;
+        }
+        
+        .pellet-output {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: #27ae60;
+            border-radius: 50%;
+            top: 140px;
+            left: 450px;
+            animation: pelletFlow 3s ease-out infinite;
+            box-shadow: 0 0 8px #27ae60;
+        }
+        
+        .pellet-output:nth-child(6) { animation-delay: 0.5s; }
+        .pellet-output:nth-child(7) { animation-delay: 1s; }
+        .pellet-output:nth-child(8) { animation-delay: 1.5s; }
+        
+        @keyframes pelletFlow {
+            0% { left: 450px; opacity: 1; }
+            100% { left: 550px; opacity: 0; }
+        }
+        
+        /* Pyrolysis components */
+        .reactor-chamber {
+            position: absolute;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 140px;
+            height: 180px;
+            background: radial-gradient(circle, #e74c3c, #c0392b, #1a1a1a);
+            border-radius: 50%;
+            border: 4px solid #2c3e50;
+            box-shadow: 0 0 40px rgba(231, 76, 60, 0.6);
+            animation: reactorGlow 3s ease-in-out infinite;
+        }
+        
+        @keyframes reactorGlow {
+            0%, 100% { box-shadow: 0 0 40px rgba(231, 76, 60, 0.6); }
+            50% { box-shadow: 0 0 60px rgba(231, 76, 60, 1); }
+        }
+        
+        .reactor-temp {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 0 0 10px #fff;
+            z-index: 2;
+        }
+        
+        .fire-particle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: #ff6b35;
+            border-radius: 50%;
+            animation: fireRise 2s ease-out infinite;
+        }
+        
+        @keyframes fireRise {
+            0% { 
+                bottom: 20%;
+                left: 50%;
+                opacity: 1;
+                transform: translateX(-50%) scale(1);
+            }
+            100% { 
+                bottom: 80%;
+                left: calc(50% + 20px);
+                opacity: 0;
+                transform: translateX(-50%) scale(0.3);
+            }
+        }
+        
+        .fire-particle:nth-child(2) { 
+            animation-delay: 0.3s; 
+            left: 45%;
+        }
+        .fire-particle:nth-child(3) { 
+            animation-delay: 0.6s; 
+            left: 55%;
+        }
+        .fire-particle:nth-child(4) { 
+            animation-delay: 0.9s; 
+            left: 48%;
+        }
+        
+        .output-pipe {
+            position: absolute;
+            height: 20px;
+            background: linear-gradient(90deg, transparent, var(--pipe-color));
+            border-radius: 10px;
+            border: 2px solid var(--pipe-border);
+        }
+        
+        .gas-pipe {
+            --pipe-color: #3498db;
+            --pipe-border: #2980b9;
+            top: 110px;
+            right: 50px;
+            width: 100px;
+        }
+        
+        .oil-pipe {
+            --pipe-color: #f39c12;
+            --pipe-border: #e67e22;
+            top: 160px;
+            right: 50px;
+            width: 100px;
+        }
+        
+        .char-pipe {
+            position: absolute;
+            width: 40px;
+            height: 60px;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(to bottom, transparent, #34495e);
+            border-left: 2px solid #2c3e50;
+            border-right: 2px solid #2c3e50;
+        }
+        
+        .output-particle {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            animation: flowOut 3s ease-out infinite;
+        }
+        
+        .gas-particle {
+            background: #3498db;
+            box-shadow: 0 0 8px #3498db;
+            top: 115px;
+            right: 50px;
+        }
+        
+        .oil-particle {
+            background: #f39c12;
+            box-shadow: 0 0 8px #f39c12;
+            top: 165px;
+            right: 50px;
+            animation-delay: 0.5s;
+        }
+        
+        @keyframes flowOut {
+            0% { right: 50px; opacity: 1; }
+            100% { right: -20px; opacity: 0; }
+        }
+        
+        .char-particle {
+            background: #34495e;
+            width: 6px;
+            height: 6px;
+            bottom: 80px;
+            left: 50%;
+            animation: charFall 2s ease-in infinite;
+        }
+        
+        @keyframes charFall {
+            0% { bottom: 160px; opacity: 1; }
+            100% { bottom: 20px; opacity: 0; }
+        }
+        
+        /* Control Panel */
+        .control-panel {
+            background: rgba(44, 62, 80, 0.8);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+            border: 2px solid #34495e;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .led-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin: 5px 10px 5px 0;
+            animation: blink 2s ease-in-out infinite;
+            box-shadow: 0 0 10px currentColor;
+        }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        
+        .led-green {
+            background: #27ae60;
+        }
+        
+        .led-red {
+            background: #e74c3c;
+        }
+        
+        .led-yellow {
+            background: #f39c12;
+        }
+        
+        .led-blue {
+            background: #3498db;
+        }
+        
+        .status-text {
+            display: inline-block;
+            margin-right: 20px;
+            font-size: 0.9em;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        .stat-card {
+            background: rgba(26, 26, 46, 0.8);
+            border-radius: 10px;
+            padding: 20px;
+            border: 2px solid #ffd700;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(255, 215, 0, 0.3);
+        }
+        
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #4ecca3;
+            margin: 10px 0;
+        }
+        
+        .stat-label {
+            color: #90caf9;
+            font-size: 0.9em;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            background: rgba(26, 26, 46, 0.6);
+            border-radius: 10px;
+            border: 2px solid #4ecca3;
+        }
+        
+        .footer-text {
+            color: #90caf9;
+            font-size: 0.95em;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            .module {
+                min-width: 100%;
+            }
+            
+            .machine-visual {
+                height: 300px;
+            }
+            
+            .barrel {
+                width: 250px;
+                left: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🚀 MARS WASTE PROCESSING DEVICE</h1>
+            <p class="subtitle">Live Simulation and Monitoring System</p>
+        </header>
+        
+        <div class="machine-container">
+            <!-- EXTRUSION MODULE -->
+            <div class="module extrusion">
+                <h2 class="module-title">♻️ EXTRUSION MODULE</h2>
+                
+                <div class="machine-visual">
+                    <div class="hopper">
+                        <div class="material-input"></div>
+                    </div>
+                    
+                    <div class="barrel">
+                        <div class="heating-zone zone1">180°C</div>
+                        <div class="heating-zone zone2">200°C</div>
+                        <div class="heating-zone zone3">220°C</div>
+                        <div class="screw-animation"></div>
+                    </div>
+                    
+                    <div class="die-head"></div>
+                    
+                    <div class="pellet-output"></div>
+                    <div class="pellet-output"></div>
+                    <div class="pellet-output"></div>
+                    <div class="pellet-output"></div>
+                </div>
+                
+                <div class="control-panel">
+                    <div>
+                        <span class="led-indicator led-green"></span>
+                        <span class="status-text">Active</span>
+                        
+                        <span class="led-indicator led-red"></span>
+                        <span class="status-text">Heating</span>
+                        
+                        <span class="led-indicator led-blue"></span>
+                        <span class="status-text">Cooling</span>
+                    </div>
+                    <div style="margin-top: 15px; font-size: 0.95em;">
+                        <div>⚡ Energy: <strong style="color: #4ecca3;">5.2 kWh</strong></div>
+                        <div>🌡️ Temperature: <strong style="color: #e74c3c;">198°C</strong></div>
+                        <div>📦 Productivity: <strong style="color: #f39c12;">4.5 kg/day</strong></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- PYROLYSIS MODULE -->
+            <div class="module pyrolysis">
+                <h2 class="module-title">🔥 PYROLYSIS REACTOR</h2>
+                
+                <div class="machine-visual">
+                    <div class="hopper">
+                        <div class="material-input"></div>
+                    </div>
+                    
+                    <div class="reactor-chamber">
+                        <div class="reactor-temp">518°C</div>
+                        <div class="fire-particle"></div>
+                        <div class="fire-particle"></div>
+                        <div class="fire-particle"></div>
+                        <div class="fire-particle"></div>
+                    </div>
+                    
+                    <div class="output-pipe gas-pipe"></div>
+                    <div class="output-pipe oil-pipe"></div>
+                    <div class="char-pipe"></div>
+                    
+                    <div class="output-particle gas-particle"></div>
+                    <div class="output-particle oil-particle"></div>
+                    <div class="output-particle char-particle"></div>
+                </div>
+                
+                <div class="control-panel">
+                    <div>
+                        <span class="led-indicator led-green"></span>
+                        <span class="status-text">Active</span>
+                        
+                        <span class="led-indicator led-red"></span>
+                        <span class="status-text">Reaction</span>
+                        
+                        <span class="led-indicator led-yellow"></span>
+                        <span class="status-text">Normal</span>
+                    </div>
+                    <div style="margin-top: 15px; font-size: 0.95em;">
+                        <div>⚡ Energy: <strong style="color: #4ecca3;">5.8 kWh</strong></div>
+                        <div>🌡️ Temperature: <strong style="color: #e74c3c;">518°C</strong></div>
+                        <div>📦 Product: <strong style="color: #f39c12;">Oil + Gas + Char</strong></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- STATS -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">📐 Dimensions</div>
+                <div class="stat-value">150×80×65</div>
+                <div class="stat-label">centimeters</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-label">⚖️ Total Weight</div>
+                <div class="stat-value">~320</div>
+                <div class="stat-label">kilograms</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-label">⚡ Daily Energy</div>
+                <div class="stat-value">10-12</div>
+                <div class="stat-label">kWh</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-label">♻️ Processing Capacity</div>
+                <div class="stat-value">~11</div>
+                <div class="stat-label">kg/day</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-label">🤖 Automation</div>
+                <div class="stat-value">95%</div>
+                <div class="stat-label">autonomous</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-label">♻️ Recycling</div>
+                <div class="stat-value">~85%</div>
+                <div class="stat-label">efficiency</div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p class="footer-text">
+                🌌 <strong>Sustainable Waste Management System for Mars Mission</strong><br>
+                With the integration of Extrusion and Pyrolysis technologies<br>
+                ⚡ Energy efficient • 🛡️ Safe • 🤖 Automatic • ♻️ Ecological
+            </p>
+        </div>
+    </div>
+</body>
+</html>
